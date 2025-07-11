@@ -10,8 +10,9 @@ Easily extendable for more advanced image editing tasks
 
 🧰 Requirements
 Make sure you have Python installed. Then install the required packages:
+     pip install flask opencv-python
 
-pip install flask opencv-python
+
 📁 Project Structure
 FlaskImgEdit/
 │
@@ -19,14 +20,15 @@ FlaskImgEdit/
 ├── static/               # Folder to store static assets (CSS, JS, images)
 └── templates/
     └── index.html        # Main HTML page for UI
+
+
 📝 Setup Instructions
 Clone the repository or create a new project folder
 
-Install dependencies
+Install dependencies pip install flask opencv-python
 
-pip install flask opencv-python
+
 Create the required folders
-
 mkdir static templates
 Create files
 
