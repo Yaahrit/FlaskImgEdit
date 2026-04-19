@@ -1,57 +1,131 @@
-📸 FlaskImgEdit
-A simple web application built with Flask and OpenCV that allows you to edit images directly in your browser.
+# 🖼️ FlaskImgEdit
 
-🚀 Features
-Upload and view images via a web interface
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white"/>
+  <img src="https://img.shields.io/badge/OpenCV-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white"/>
+  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge"/>
+</p>
 
-Perform basic image operations using OpenCV
+<p align="center">
+  A lightweight browser-based image editing web application built with <strong>Flask</strong> and <strong>OpenCV</strong>.
+  Upload, process, and transform images directly from your browser — no software installation required.
+</p>
 
-Easily extendable for more advanced image editing tasks
+---
 
-🧰 Requirements
-Make sure you have Python installed. Then install the required packages:
-     pip install flask opencv-python
+## ✨ Features
 
+- 📤 **Image Upload** — Upload images via a clean web interface
+- 🔧 **OpenCV Processing** — Apply image operations powered by OpenCV
+- 🌐 **Browser-Based** — No desktop app needed; runs fully in the browser
+- 🔌 **Easily Extendable** — Add filters, face detection, resizing, and more with minimal effort
 
-📁 Project Structure
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Backend | Python, Flask |
+| Image Processing | OpenCV (`cv2`) |
+| Frontend | HTML5, CSS3 |
+| Server | Flask Development Server |
+
+---
+
+## 📁 Project Structure
+
+```
 FlaskImgEdit/
 │
-├── main.py               # Main Flask application
-├── static/               # Folder to store static assets (CSS, JS, images)
+├── main.py               # Core Flask application & route handlers
+├── static/               # Static assets (CSS, JS, processed images)
 └── templates/
-    └── index.html        # Main HTML page for UI
+    └── index.html        # Main UI template
+```
 
+---
 
-📝 Setup Instructions
-Clone the repository or create a new project folder
+## ⚙️ Getting Started
 
-Install dependencies pip install flask opencv-python
+### Prerequisites
+- Python 3.7+
+- pip
 
+### Installation
 
-Create the required folders
+```bash
+# 1. Clone the repository
+git clone https://github.com/yaahrit/FlaskImgEdit.git
+cd FlaskImgEdit
+
+# 2. Install dependencies
+pip install flask opencv-python
+
+# 3. Create required directories
 mkdir static templates
-Create files
 
-In the root: main.py
-
-In the templates/ folder: index.html
-
-Run the Flask app
-
+# 4. Run the application
 python main.py
-Access the app
-Open your browser and go to: http://127.0.0.1:5000
+```
 
-📌 Notes
-Make sure the image files are saved in a supported format (e.g., .jpg, .png).
+### Access the App
 
-You can extend this project by adding filters, resizing options, face detection, etc.
+Open your browser and navigate to:
+```
+http://127.0.0.1:5000
+```
 
-📷 Screenshot (Optional)
-Add a screenshot of your application here for better presentation.
+---
 
-🤝 Contribution
-Feel free to fork this repository and enhance the functionality. Pull requests are welcome!
+## 📌 Usage
 
-📄 License
-This project is open-source and available under the MIT License.
+1. Open the app in your browser
+2. Upload an image (`.jpg`, `.png`, `.jpeg` supported)
+3. Select the desired image operation
+4. View and download the processed image
+
+---
+
+## 🚀 Planned Enhancements
+
+- [ ] Grayscale & color filter options
+- [ ] Image resizing and cropping
+- [ ] Edge detection using Canny algorithm
+- [ ] Face detection using Haar Cascades
+- [ ] Brightness & contrast control
+- [ ] Download processed image button
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Follow these steps:
+
+```bash
+# Fork the repo, then:
+git checkout -b feature/your-feature-name
+git commit -m "Add: your feature description"
+git push origin feature/your-feature-name
+# Open a Pull Request
+```
+
+---
+
+## 📄 License
+
+This project is open-source and available under the [MIT License](LICENSE).
+
+---
+
+## 👨‍💻 Author
+
+**Yash Raj**
+[![Portfolio](https://img.shields.io/badge/Portfolio-FF6B00?style=flat&logo=vercel&logoColor=white)](https://yashrajhub.netlify.app)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat&logo=linkedin&logoColor=white)](https://linkedin.com/in/yashrajhub)
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white)](https://github.com/yaahrit)
+
+---
+
+<p align="center">⭐ If you found this helpful, consider starring the repo!</p>
