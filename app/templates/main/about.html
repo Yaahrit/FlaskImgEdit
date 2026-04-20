@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto py-12">
+    <!-- Hero Section -->
+    <div class="text-center mb-20">
+        <h1 class="text-6xl font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+            About EditMonkey
+        </h1>
+        <p class="text-2xl opacity-70 max-w-2xl mx-auto">
+            Empowering creators with lightning-fast, production-grade image processing tools directly in the browser.
+        </p>
+    </div>
+
+    <!-- Mission Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-24">
+        <div class="space-y-6">
+            <h2 class="text-4xl font-bold">Our Mission</h2>
+            <p class="text-lg leading-relaxed opacity-80">
+                EditMonkey was born out of a desire to bridge the gap between complex computer vision libraries and everyday users. We've integrated the raw power of **OpenCV** into a sleek, modern interface, making professional image manipulation accessible to everyone without the steep learning curve.
+            </p>
+            <div class="flex gap-4">
+                <div class="badge badge-primary badge-outline p-4">Fast</div>
+                <div class="badge badge-secondary badge-outline p-4">Secure</div>
+                <div class="badge badge-accent badge-outline p-4">Open Source</div>
+            </div>
+        </div>
+        <div class="bg-base-300 rounded-3xl p-8 shadow-inner flex items-center justify-center">
+            <i class="fas fa-monkey text-9xl text-primary/20 animate-pulse"></i>
+        </div>
+    </div>
+
+    <!-- Tech Stack Section -->
+    <div class="mb-24 text-center">
+        <h2 class="text-4xl font-bold mb-12">Technology Stack</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div class="card bg-base-100 shadow-xl border border-base-300">
+                <div class="card-body items-center">
+                    <i class="fab fa-python text-5xl text-[#3776AB] mb-4"></i>
+                    <h3 class="font-bold">Python</h3>
+                    <p class="text-xs opacity-60">The backbone of our logic</p>
+                </div>
+            </div>
+            <div class="card bg-base-100 shadow-xl border border-base-300">
+                <div class="card-body items-center">
+                    <i class="fas fa-flask text-5xl text-primary mb-4"></i>
+                    <h3 class="font-bold">Flask</h3>
+                    <p class="text-xs opacity-60">Lightweight & Scalable</p>
+                </div>
+            </div>
+            <div class="card bg-base-100 shadow-xl border border-base-300">
+                <div class="card-body items-center">
+                    <i class="fas fa-eye text-5xl text-secondary mb-4"></i>
+                    <h3 class="font-bold">OpenCV</h3>
+                    <p class="text-xs opacity-60">Computer Vision Power</p>
+                </div>
+            </div>
+            <div class="card bg-base-100 shadow-xl border border-base-300">
+                <div class="card-body items-center">
+                    <i class="fab fa-css3-alt text-5xl text-[#06B6D4] mb-4"></i>
+                    <h3 class="font-bold">Tailwind CSS</h3>
+                    <p class="text-xs opacity-60">Modern Premium Styling</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Security Section -->
+    <div class="bg-primary text-primary-content rounded-[3rem] p-12 lg:p-20 shadow-2xl relative overflow-hidden">
+        <div class="relative z-10">
+            <h2 class="text-4xl font-bold mb-6">Security First</h2>
+            <p class="text-xl max-w-3xl leading-relaxed opacity-90">
+                We take your privacy seriously. Every image you upload is processed in a secure environment and sanitized using UUIDs to prevent directory traversal attacks. Images are automatically purged from our servers after a short period, ensuring that your data stays yours.
+            </p>
+            <div class="mt-10 flex flex-wrap gap-6">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-check-circle text-2xl"></i>
+                    <span>End-to-End Encryption</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-check-circle text-2xl"></i>
+                    <span>Automatic Purge Policy</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-check-circle text-2xl"></i>
+                    <span>No Data Tracking</span>
+                </div>
+            </div>
+        </div>
+        <i class="fas fa-shield-alt absolute -right-20 -bottom-20 text-[20rem] opacity-10"></i>
+    </div>
+</div>
+{% endblock %}

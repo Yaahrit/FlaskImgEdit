@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto py-10">
+    <div class="text-center mb-12">
+        <h1 class="text-5xl font-black mb-4">Batch <span class="text-secondary">Resize</span></h1>
+        <p class="opacity-60 max-w-2xl mx-auto text-lg">Process hundreds of images at once. Set your dimensions once and let EditMonkey handle the rest.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Control Panel -->
+        <div class="card bg-base-100 shadow-xl lg:col-span-1 border border-base-300">
+            <div class="card-body">
+                <h2 class="card-title mb-6"><i class="fas fa-cog text-secondary"></i> Batch Settings</h2>
+                
+                <div class="space-y-6">
+                    <div class="form-control w-full">
+                        <label class="label"><span class="label-text font-bold">Target Width (px)</span></label>
+                        <input type="number" id="batchWidth" value="800" class="input input-bordered w-full rounded-xl" />
+                    </div>
+                    <div class="form-control w-full">
+                        <label class="label"><span class="label-text font-bold">Target Height (px)</span></label>
+                        <input type="number" id="batchHeight" value="600" class="input input-bordered w-full rounded-xl" />
+                    </div>
+                    <div class="form-control w-full">
+                        <label class="label cursor-pointer justify-start gap-4">
+                            <input type="checkbox" checked class="checkbox checkbox-secondary" />
+                            <span class="label-text">Maintain Aspect Ratio</span>
+                        </label>
+                    </div>
+                    <div class="form-control w-full">
+                        <label class="label"><span class="label-text font-bold">Output Format</span></label>
+                        <select class="select select-bordered w-full rounded-xl">
+                            <option>Original</option>
+                            <option>PNG</option>
+                            <option>JPG</option>
+                            <option>WEBP</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-secondary w-full rounded-xl mt-4" id="startBatch">
+                        Start Batch Process
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload & Queue -->
+        <div class="lg:col-span-2 space-y-8">
+            <div id="batchDropZone" class="border-4 border-dashed border-secondary/20 rounded-[2.5rem] p-16 text-center hover:bg-secondary/5 transition-all cursor-pointer group">
+                <div class="bg-secondary/10 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-images text-4xl text-secondary"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-2">Upload Multiple Images</h3>
+                <p class="opacity-50">Drag and drop or click to select files (Max 50 images)</p>
+                <input type="file" multiple class="hidden" id="batchFileInput" accept="image/*" />
+            </div>
+
+            <div class="card bg-base-100 shadow-xl border border-base-300">
+                <div class="card-body">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="card-title"><i class="fas fa-list-check text-secondary"></i> Processing Queue</h2>
+                        <span class="badge badge-outline" id="queueCount">0 files selected</span>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="table table-zebra w-full" id="queueTable">
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Filename</th>
+                                    <th>Size</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="queueBody">
+                                <!-- Queue items will appear here -->
+                                <tr id="emptyQueue">
+                                    <td colspan="4" class="text-center py-10 opacity-30">Your queue is empty</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const dropZone = document.getElementById('batchDropZone');
+    const fileInput = document.getElementById('batchFileInput');
+    const queueBody = document.getElementById('queueBody');
+    const emptyQueue = document.getElementById('emptyQueue');
+    const queueCount = document.getElementById('queueCount');
+
+    dropZone.onclick = () => fileInput.click();
+
+    fileInput.onchange = (e) => handleFiles(e.target.files);
+
+    function handleFiles(files) {
+        if (files.length > 0) {
+            emptyQueue.classList.add('hidden');
+            queueCount.innerText = `${files.length} files selected`;
+            
+            Array.from(files).forEach(file => {
+                const row = document.createElement('tr');
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    row.innerHTML = `
+                        <td><img src="${e.target.result}" class="w-12 h-12 object-cover rounded-lg shadow-md"></td>
+                        <td class="font-medium">${file.name}</td>
+                        <td class="text-xs opacity-50">${(file.size / 1024).toFixed(1)} KB</td>
+                        <td><span class="badge badge-ghost">Pending</span></td>
+                    `;
+                };
+                reader.readAsDataURL(file);
+                queueBody.appendChild(row);
+            });
+        }
+    }
+</script>
+{% endblock %}

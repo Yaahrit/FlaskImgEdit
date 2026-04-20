@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="flex flex-col lg:flex-row gap-8">
+    <!-- Left Panel: Upload and Controls -->
+    <div class="w-full lg:w-1/3 flex flex-col gap-6">
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title text-2xl font-bold mb-4"><i class="fas fa-upload text-primary mr-2"></i> Upload Image</h2>
+                
+                <form action="{{ url_for('editor.upload') }}" method="POST" enctype="multipart/form-data" id="uploadForm">
+                    <div class="form-control w-full">
+                        <label class="label">
+                            <span class="label-text">Select an image (PNG, JPG, WEBP)</span>
+                        </label>
+                        <input type="file" name="file" class="file-input file-input-bordered file-input-primary w-full" accept="image/*" onchange="this.form.submit()" />
+                    </div>
+                    
+                    <div id="dropZone" class="mt-4 border-2 border-dashed border-primary/30 rounded-xl p-10 text-center hover:bg-primary/5 cursor-pointer transition-colors">
+                        <i class="fas fa-cloud-arrow-up text-4xl text-primary/50 mb-3"></i>
+                        <p class="text-sm opacity-60">Drag and drop your image here</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if filename %}
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title text-2xl font-bold mb-4"><i class="fas fa-sliders text-secondary mr-2"></i> Operations</h2>
+                
+                <form action="{{ url_for('editor.process') }}" method="POST" id="processForm">
+                    <input type="hidden" name="filename" value="{{ filename if filename else original }}">
+                    
+                    <div class="flex flex-col gap-4">
+                        <div class="form-control">
+                            <label class="label cursor-pointer justify-start gap-4">
+                                <input type="radio" name="operation" value="grayscale" class="radio radio-primary" checked />
+                                <span class="label-text text-lg">Grayscale</span>
+                            </label>
+                        </div>
+                        <div class="form-control">
+                            <label class="label cursor-pointer justify-start gap-4">
+                                <input type="radio" name="operation" value="blur" class="radio radio-primary" />
+                                <span class="label-text text-lg">Gaussian Blur</span>
+                            </label>
+                            <div class="px-8 hidden opacity-0 transition-all duration-300 operation-params" data-op="blur">
+                                <span class="label-text-alt">Kernel Size: <span id="blurVal">5</span></span>
+                                <input type="range" name="ksize" min="1" max="21" value="5" step="2" class="range range-xs range-primary" oninput="document.getElementById('blurVal').innerText=this.value" />
+                            </div>
+                        </div>
+                        <div class="form-control">
+                            <label class="label cursor-pointer justify-start gap-4">
+                                <input type="radio" name="operation" value="rotate" class="radio radio-primary" />
+                                <span class="label-text text-lg">Rotate</span>
+                            </label>
+                            <div class="px-8 hidden opacity-0 transition-all duration-300 operation-params" data-op="rotate">
+                                <span class="label-text-alt">Angle: <span id="rotateVal">90</span>°</span>
+                                <input type="range" name="angle" min="0" max="360" value="90" step="90" class="range range-xs range-secondary" oninput="document.getElementById('rotateVal').innerText=this.value" />
+                            </div>
+                        </div>
+                        <div class="form-control">
+                            <label class="label cursor-pointer justify-start gap-4">
+                                <input type="radio" name="operation" value="edges" class="radio radio-primary" />
+                                <span class="label-text text-lg">Edge Detection</span>
+                            </label>
+                        </div>
+                        <div class="form-control">
+                            <label class="label cursor-pointer justify-start gap-4">
+                                <input type="radio" name="operation" value="brightness" class="radio radio-primary" />
+                                <span class="label-text text-lg">Brightness & Contrast</span>
+                            </label>
+                            <div class="px-8 hidden opacity-0 transition-all duration-300 operation-params" data-op="brightness">
+                                <span class="label-text-alt">Brightness: <span id="brightVal">0</span></span>
+                                <input type="range" name="brightness" min="-100" max="100" value="0" class="range range-xs range-accent" oninput="document.getElementById('brightVal').innerText=this.value" />
+                                <span class="label-text-alt mt-2">Contrast: <span id="contVal">1.0</span></span>
+                                <input type="range" name="contrast" min="0.5" max="3.0" value="1.0" step="0.1" class="range range-xs range-accent" oninput="document.getElementById('contVal').innerText=this.value" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-secondary w-full mt-8" id="processBtn">
+                        <span id="btnText">Apply Operation</span>
+                        <span id="btnLoader" class="loading loading-spinner hidden"></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Right Panel: Preview -->
+    <div class="w-full lg:w-2/3">
+        <div class="card bg-base-100 shadow-xl min-h-[500px]">
+            <div class="card-body">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="card-title text-2xl font-bold"><i class="fas fa-image text-accent mr-2"></i> Preview</h2>
+                    {% if processed %}
+                    <a href="{{ url_for('editor.download', filename=processed) }}" class="btn btn-outline btn-accent btn-sm">
+                        <i class="fas fa-download mr-2"></i> Download Result
+                    </a>
+                    {% endif %}
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-center">
+                    {% if filename or original %}
+                    <div class="flex-1 text-center">
+                        <p class="text-sm font-semibold mb-2 opacity-60">ORIGINAL</p>
+                        <div class="rounded-xl overflow-hidden border-2 border-base-300 shadow-inner">
+                            <img src="{{ url_for('static', filename='uploads/' + (original if original else filename)) }}" class="max-h-[400px] mx-auto object-contain">
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if processed %}
+                    <div class="hidden md:block">
+                        <i class="fas fa-arrow-right text-3xl text-base-300"></i>
+                    </div>
+                    <div class="flex-1 text-center">
+                        <p class="text-sm font-semibold mb-2 text-secondary">PROCESSED ({{ operation | upper }})</p>
+                        <div class="rounded-xl overflow-hidden border-2 border-secondary/30 shadow-lg">
+                            <img src="{{ url_for('static', filename='processed/' + processed) }}" class="max-h-[400px] mx-auto object-contain">
+                        </div>
+                    </div>
+                    {% elif filename %}
+                    <div class="flex-1 flex flex-col items-center justify-center text-center opacity-30">
+                        <i class="fas fa-wand-magic-sparkles text-6xl mb-4"></i>
+                        <p>Select an operation to see the result</p>
+                    </div>
+                    {% else %}
+                    <div class="flex flex-col items-center justify-center text-center py-20 opacity-30">
+                        <i class="fas fa-image text-8xl mb-6"></i>
+                        <p class="text-xl">Upload an image to start editing</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Radio button parameter toggling
+    const radios = document.querySelectorAll('input[name="operation"]');
+    const paramBlocks = document.querySelectorAll('.operation-params');
+
+    function updateParams() {
+        const activeOp = document.querySelector('input[name="operation"]:checked').value;
+        paramBlocks.forEach(block => {
+            if (block.dataset.op === activeOp) {
+                block.classList.remove('hidden');
+                setTimeout(() => block.classList.remove('opacity-0'), 10);
+            } else {
+                block.classList.add('opacity-0');
+                setTimeout(() => block.classList.add('hidden'), 300);
+            }
+        });
+    }
+
+    radios.forEach(r => r.addEventListener('change', updateParams));
+    updateParams();
+
+    // Loading state for process button
+    const processForm = document.getElementById('processForm');
+    if (processForm) {
+        processForm.addEventListener('submit', () => {
+            document.getElementById('btnText').innerText = 'Processing...';
+            document.getElementById('btnLoader').classList.remove('hidden');
+            document.getElementById('processBtn').classList.add('btn-disabled');
+        });
+    }
+
+    // Drag and Drop
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.querySelector('input[type="file"]');
+
+    if (dropZone) {
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, e => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, false);
+        });
+
+        dropZone.addEventListener('dragover', () => dropZone.classList.add('bg-primary/10'));
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('bg-primary/10'));
+        
+        dropZone.addEventListener('drop', (e) => {
+            dropZone.classList.remove('bg-primary/10');
+            const files = e.dataTransfer.files;
+            if (files.length) {
+                fileInput.files = files;
+                document.getElementById('uploadForm').submit();
+            }
+        });
+
+        dropZone.addEventListener('click', () => fileInput.click());
+    }
+</script>
+{% endblock %}

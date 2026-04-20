@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EditMonkey - Professional Image Editor</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-base-200 font-sans">
+    <div class="sticky top-0 z-[100] w-full border-b border-base-300 bg-base-100/80 backdrop-blur-lg">
+        <div class="navbar container mx-auto px-4 lg:px-10 h-20">
+            <div class="navbar-start">
+                <div class="dropdown">
+                    <label tabindex="0" class="btn btn-ghost lg:hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
+                    </label>
+                    <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                        <li><a href="/">Home</a></li>
+                        <li>
+                            <a>Solutions</a>
+                            <ul class="p-2">
+                                <li><a href="/editor">Standard Editor</a></li>
+                                <li><a href="/editor/batch">Batch Resize</a></li>
+                                <li><a href="/editor/filters">AI Filters</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="/about">About</a></li>
+                    </ul>
+                </div>
+                <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="EditMonkey Logo" class="w-10 h-10 rounded-xl shadow-lg">
+                    <span class="text-2xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+                        EditMonkey
+                    </span>
+                </a>
+            </div>
+            
+            <div class="navbar-center hidden lg:flex">
+                <ul class="menu menu-horizontal px-1 gap-2 font-medium">
+                    <li><a href="/" class="rounded-lg">Home</a></li>
+                    <li tabindex="0" class="dropdown dropdown-hover">
+                        <label class="rounded-lg">
+                            Solutions <i class="fas fa-chevron-down text-[10px] ml-1"></i>
+                        </label>
+                        <ul class="dropdown-content z-[1] menu p-2 shadow-2xl bg-base-100 rounded-2xl w-52 mt-0 border border-base-300">
+                            <li><a href="/editor"><i class="fas fa-image text-primary"></i> Standard Editor</a></li>
+                            <li><a href="/editor/batch"><i class="fas fa-layer-group text-secondary"></i> Batch Resize</a></li>
+                            <li><a href="/editor/filters"><i class="fas fa-magic text-accent"></i> AI Filters</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="/about" class="rounded-lg">About</a></li>
+                </ul>
+            </div>
+            
+            <div class="navbar-end gap-4">
+                <div class="hidden sm:flex gap-2">
+                    <button class="btn btn-ghost btn-sm rounded-full" onclick="login_modal.showModal()">Log In</button>
+                    <a href="/editor" class="btn btn-primary btn-sm rounded-full px-6">Get Started</a>
+                </div>
+                
+                <!-- Theme Toggle -->
+                <label class="swap swap-rotate btn btn-ghost btn-circle btn-sm">
+                    <input type="checkbox" class="theme-controller" value="dark" id="themeToggle" />
+                    <i class="fas fa-sun swap-off text-xl"></i>
+                    <i class="fas fa-moon swap-on text-xl"></i>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <dialog id="login_modal" class="modal">
+        <div class="modal-box max-w-md rounded-3xl p-8">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4">✕</button>
+            </form>
+            <h3 class="font-black text-3xl mb-2">Welcome Back</h3>
+            <p class="opacity-60 mb-8">Login to save your image history and access premium filters.</p>
+            
+            <div class="space-y-4">
+                <div class="form-control">
+                    <label class="label"><span class="label-text font-bold">Email Address</span></label>
+                    <input type="email" placeholder="name@company.com" class="input input-bordered w-full rounded-xl" />
+                </div>
+                <div class="form-control">
+                    <label class="label"><span class="label-text font-bold">Password</span></label>
+                    <input type="password" placeholder="••••••••" class="input input-bordered w-full rounded-xl" />
+                </div>
+                <button class="btn btn-primary w-full rounded-xl mt-4">Sign In</button>
+            </div>
+            
+            <div class="divider text-xs opacity-30 uppercase tracking-widest mt-8">Or continue with</div>
+            <div class="grid grid-cols-2 gap-4">
+                <button class="btn btn-outline rounded-xl"><i class="fab fa-google mr-2"></i> Google</button>
+                <button class="btn btn-outline rounded-xl"><i class="fab fa-github mr-2"></i> GitHub</button>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+
+    <main class="container mx-auto p-4 lg:p-10">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'error' if category == 'error' else 'success' }} mb-6 shadow-md">
+                        <i class="fas fa-{{ 'circle-exclamation' if category == 'error' else 'circle-check' }}"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer content here... -->
+    <footer class="footer p-10 bg-base-100 text-base-content border-t border-base-300">
+        <div>
+            <span class="footer-title opacity-100 text-primary font-bold text-lg">EditMonkey</span> 
+            <p class="max-w-xs opacity-60">Providing professional image editing tools with a focus on speed, security, and ease of use.</p>
+            <div class="flex gap-4 mt-4">
+                <a class="btn btn-ghost btn-sm btn-circle"><i class="fab fa-twitter text-xl"></i></a>
+                <a class="btn btn-ghost btn-sm btn-circle"><i class="fab fa-github text-xl"></i></a>
+                <a class="btn btn-ghost btn-sm btn-circle"><i class="fab fa-linkedin text-xl"></i></a>
+            </div>
+        </div> 
+        <div>
+            <span class="footer-title">Services</span> 
+            <a class="link link-hover" href="/editor">Image Editor</a>
+            <a class="link link-hover">Batch Processing</a>
+            <a class="link link-hover">API Access</a>
+            <a class="link link-hover">Custom Filters</a>
+        </div> 
+        <div>
+            <span class="footer-title">Company</span> 
+            <a class="link link-hover" href="/about">About us</a>
+            <a class="link link-hover">Contact</a>
+            <a class="link link-hover">Careers</a>
+            <a class="link link-hover">Press kit</a>
+        </div> 
+        <div>
+            <span class="footer-title">Legal</span> 
+            <a class="link link-hover">Terms of use</a>
+            <a class="link link-hover">Privacy policy</a>
+            <a class="link link-hover">Cookie policy</a>
+        </div>
+        <div>
+            <span class="footer-title">Newsletter</span> 
+            <div class="form-control w-80">
+                <label class="label">
+                    <span class="label-text">Enter your email address</span>
+                </label> 
+                <div class="relative">
+                    <input type="text" placeholder="username@site.com" class="input input-bordered w-full pr-16" /> 
+                    <button class="btn btn-primary absolute top-0 right-0 rounded-l-none">Subscribe</button>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <footer class="footer footer-center p-4 bg-base-200 text-base-content border-t border-base-300">
+        <div>
+            <p>Copyright © 2026 - All right reserved by EditMonkey Ltd</p>
+        </div>
+    </footer>
+
+    <script>
+        // Theme Toggle Persistence
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', savedTheme);
+        themeToggle.checked = savedTheme === 'dark';
+
+        themeToggle.addEventListener('change', () => {
+            const theme = themeToggle.checked ? 'dark' : 'light';
+            html.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
